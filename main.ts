@@ -1,3 +1,43 @@
+namespace SpriteKind {
+    export const Cursor = SpriteKind.create()
+    export const BlackPiece = SpriteKind.create()
+    export const WhitePiece = SpriteKind.create()
+}
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    hover = Pointer
+    Pointer.y += -16
+    if (hand != Pointer) {
+        hand.y += -16
+    }
+})
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (hand == Pointer) {
+        hand = hover
+    } else {
+        hand = Pointer
+    }
+})
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    hover = Pointer
+    Pointer.x += -16
+    if (hand != Pointer) {
+        hand.x += -16
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    hover = Pointer
+    if (hand.x < 120) {
+        Pointer.x += 16
+        if (hand != Pointer) {
+            hand.x += 16
+        }
+    }
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.BlackPiece, function (sprite, otherSprite) {
+    if (hand == Pointer) {
+        hover = otherSprite
+    }
+})
 function createSprites () {
     BLRock = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -16,7 +56,7 @@ function createSprites () {
         . . f f f f f f f f f f f f . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BLRock.setPosition(120, 8)
     BRRock = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -35,7 +75,7 @@ function createSprites () {
         . . f f f f f f f f f f f f . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BRRock.setPosition(8, 8)
     BLKnight = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -54,7 +94,7 @@ function createSprites () {
         . . . f f f f f f f f 1 f f . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BLKnight.setPosition(24, 8)
     BRKnight = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -73,7 +113,7 @@ function createSprites () {
         . . . f f f f f f f f 1 f f . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BRKnight.setPosition(104, 8)
     BLBishop = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -92,7 +132,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BLBishop.setPosition(40, 8)
     BRBishop = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -111,7 +151,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BRBishop.setPosition(88, 8)
     BQueen = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -130,7 +170,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BQueen.setPosition(56, 8)
     BKing = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -149,7 +189,7 @@ function createSprites () {
         . . f 1 1 1 1 1 1 1 1 1 1 f . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     BKing.setPosition(72, 8)
     B1Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -168,7 +208,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B1Pawn.setPosition(8, 24)
     B2Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -187,7 +227,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B2Pawn.setPosition(24, 24)
     B3Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -206,7 +246,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B3Pawn.setPosition(40, 24)
     B4Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -225,7 +265,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B4Pawn.setPosition(56, 24)
     B5Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -244,7 +284,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B5Pawn.setPosition(72, 24)
     B6Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -263,7 +303,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B6Pawn.setPosition(88, 24)
     B7Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -282,7 +322,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B7Pawn.setPosition(104, 24)
     B8Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -301,7 +341,7 @@ function createSprites () {
         . . . f f f f f f f f f f . . . 
         . . f f f f f f f f f f f f . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.BlackPiece)
     B8Pawn.setPosition(120, 24)
     WLRock = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -320,7 +360,7 @@ function createSprites () {
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WLRock.setPosition(8, 120)
     WRRock = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -339,7 +379,7 @@ function createSprites () {
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WRRock.setPosition(120, 120)
     WLKnight = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -358,7 +398,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 f 1 1 . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WLKnight.setPosition(24, 120)
     WRKnight = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -377,7 +417,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 f 1 1 . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WRKnight.setPosition(104, 120)
     WLBishop = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -396,7 +436,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WLBishop.setPosition(40, 120)
     WRBishop = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -415,7 +455,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WRBishop.setPosition(88, 120)
     WQueen = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -434,7 +474,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WQueen.setPosition(56, 120)
     WKing = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -453,7 +493,7 @@ function createSprites () {
         . . 1 f f f f f f f f f f 1 . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     WKing.setPosition(72, 120)
     W1Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -472,7 +512,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W1Pawn.setPosition(8, 104)
     W2Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -491,7 +531,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W2Pawn.setPosition(24, 104)
     W3Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -510,7 +550,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W3Pawn.setPosition(40, 104)
     W4Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -529,7 +569,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W4Pawn.setPosition(56, 104)
     W5Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -548,7 +588,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W5Pawn.setPosition(72, 104)
     W6Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -567,7 +607,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W6Pawn.setPosition(88, 104)
     W7Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -586,7 +626,7 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W7Pawn.setPosition(104, 104)
     W8Pawn = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -605,9 +645,21 @@ function createSprites () {
         . . . 1 1 1 1 1 1 1 1 1 1 . . . 
         . . 1 1 1 1 1 1 1 1 1 1 1 1 . . 
         . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Player)
+        `, SpriteKind.WhitePiece)
     W8Pawn.setPosition(120, 104)
 }
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    hover = Pointer
+    Pointer.y += 16
+    if (hand != Pointer) {
+        hand.y += 16
+    }
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.WhitePiece, function (sprite, otherSprite) {
+    if (hand == Pointer) {
+        hover = otherSprite
+    }
+})
 let W8Pawn: Sprite = null
 let W7Pawn: Sprite = null
 let W6Pawn: Sprite = null
@@ -640,14 +692,31 @@ let BRKnight: Sprite = null
 let BLKnight: Sprite = null
 let BRRock: Sprite = null
 let BLRock: Sprite = null
-tiles.setTilemap(tiles.createTilemap(hex`0a0008000102010201020102000002010201020102010000010201020102010200000201020102010201000001020102010201020000020102010201020100000102010201020102000002010201020102010000`, img`
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    . . . . . . . . . . 
-    `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2], TileScale.Sixteen))
+let hover: Sprite = null
+let hand: Sprite = null
+let Pointer: Sprite = null
+tiles.setTilemap(tilemap`level_0`)
 createSprites()
+Pointer = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . 2 2 2 . . 2 2 2 2 . . 2 2 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 . . . . . . . . . . . . 2 . 
+    . 2 2 2 . . 2 2 2 2 . . 2 2 2 . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Cursor)
+Pointer.setPosition(72, 104)
+Pointer.setFlag(SpriteFlag.StayInScreen, true)
+scene.cameraFollowSprite(Pointer)
+hand = Pointer
+hover = Pointer
