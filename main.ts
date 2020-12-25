@@ -13,8 +13,16 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (hand == Pointer) {
         hand = hover
+        startX = hover.x
+        startY = hover.y
     } else {
-        hand = Pointer
+        if (1 == isMoveOK(hand)) {
+            hand = Pointer
+            startX = 0
+            startY = 0
+        } else {
+            music.baDing.play()
+        }
     }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -648,6 +656,38 @@ function createSprites () {
         `, SpriteKind.WhitePiece)
     W8Pawn.setPosition(120, 104)
 }
+function isMoveOK (piece: Sprite) {
+    if (piece.kind() == SpriteKind.BlackPiece) {
+        if (piece == BKing) {
+        	
+        } else if (piece == BQueen) {
+        	
+        } else if (piece == BLBishop || piece == BRBishop) {
+        	
+        } else if (piece == BLKnight || piece == BRKnight) {
+        	
+        } else if (piece == BLRock || piece == BRRock) {
+        	
+        } else if (piece == B1Pawn || piece == B2Pawn || (piece == B3Pawn || piece == B4Pawn) || (piece == B5Pawn || piece == B6Pawn || (piece == B7Pawn || piece == B8Pawn))) {
+        	
+        }
+    } else if (piece.kind() == SpriteKind.WhitePiece) {
+        if (piece == WKing) {
+        	
+        } else if (piece == WQueen) {
+        	
+        } else if (piece == WLBishop || piece == WRBishop) {
+        	
+        } else if (piece == WLKnight || piece == WRKnight) {
+        	
+        } else if (piece == WLRock || piece == WRRock) {
+        	
+        } else if (piece == W1Pawn || piece == W2Pawn || (piece == W3Pawn || piece == W4Pawn) || (piece == W5Pawn || piece == W6Pawn || (piece == W7Pawn || piece == W8Pawn))) {
+        	
+        }
+    }
+    return 0
+}
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     hover = Pointer
     Pointer.y += 16
@@ -692,6 +732,8 @@ let BRKnight: Sprite = null
 let BLKnight: Sprite = null
 let BRRock: Sprite = null
 let BLRock: Sprite = null
+let startY = 0
+let startX = 0
 let hover: Sprite = null
 let hand: Sprite = null
 let Pointer: Sprite = null
@@ -720,3 +762,5 @@ Pointer.setFlag(SpriteFlag.StayInScreen, true)
 scene.cameraFollowSprite(Pointer)
 hand = Pointer
 hover = Pointer
+startX = 0
+startY = 0
