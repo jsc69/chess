@@ -1,6 +1,8 @@
 #!/usr/bin/env pypy
 # -*- coding: utf-8 -*-
 
+from ucollections import namedtuple
+
 ###############################################################################
 # Piece-Square tables. Tune these to change sunfish's behaviour
 ###############################################################################
@@ -127,20 +129,20 @@ DRAW_TEST = True
 ###############################################################################
 def swapcase(text):
     ret = ''
-    for i in text:
-        if i == 'P': ret = ret + 'p'
-        elif i == 'R': ret = ret + 'r'
-        elif i == 'N': ret = ret + 'n'
-        elif i == 'B': ret = ret + 'b'
-        elif i == 'Q': ret = ret + 'q'
-        elif i == 'K': ret = ret + 'k'
-        elif i == 'p': ret = ret + 'P'
-        elif i == 'r': ret = ret + 'R'
-        elif i == 'n': ret = ret + 'N'
-        elif i == 'b': ret = ret + 'B'
-        elif i == 'q': ret = ret + 'Q'
-        elif i == 'k': ret = ret + 'K'
-        else:  ret = ret + i
+    for i in range (text.length):
+        if text.char_at(i) == 'P': ret = ret + 'p'
+        elif text.char_at(i) == 'R': ret = ret + 'r'
+        elif text.char_at(i) == 'N': ret = ret + 'n'
+        elif text.char_at(i) == 'B': ret = ret + 'b'
+        elif text.char_at(i) == 'Q': ret = ret + 'q'
+        elif text.char_at(i) == 'K': ret = ret + 'k'
+        elif text.char_at(i) == 'p': ret = ret + 'P'
+        elif text.char_at(i) == 'r': ret = ret + 'R'
+        elif text.char_at(i) == 'n': ret = ret + 'N'
+        elif text.char_at(i) == 'b': ret = ret + 'B'
+        elif text.char_at(i) == 'q': ret = ret + 'Q'
+        elif text.char_at(i) == 'k': ret = ret + 'K'
+        else:  ret = ret + text.char_at(i)
     return ret
 
 def put(board, i, p):
