@@ -1,10 +1,6 @@
 #!/usr/bin/env pypy
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from itertools import count
-from collections import namedtuple
-
 ###############################################################################
 # Piece-Square tables. Tune these to change sunfish's behaviour
 ###############################################################################
@@ -129,6 +125,26 @@ DRAW_TEST = True
 ###############################################################################
 # Chess logic
 ###############################################################################
+def swapcase(text):
+    ret = ''
+    for i in text:
+        if i == 'P': ret = ret + 'p'
+        elif i == 'R': ret = ret + 'r'
+        elif i == 'N': ret = ret + 'n'
+        elif i == 'B': ret = ret + 'b'
+        elif i == 'Q': ret = ret + 'q'
+        elif i == 'K': ret = ret + 'k'
+        elif i == 'p': ret = ret + 'P'
+        elif i == 'r': ret = ret + 'R'
+        elif i == 'n': ret = ret + 'N'
+        elif i == 'b': ret = ret + 'B'
+        elif i == 'q': ret = ret + 'Q'
+        elif i == 'k': ret = ret + 'K'
+        else:  ret = ret + i
+    return ret
+
+def put(board, i, p):
+    return board[:i] + p + board[i+1:]   
 
 class Position:
     """ A state of a chess game
@@ -151,13 +167,18 @@ class Position:
         # For each of our pieces, iterate through each possible 'ray' of moves,
         # as defined in the 'directions' map. The rays are broken e.g. by
         # captures or immediately in case of pieces such as knights.
-        for i, p in enumerate(self.board):
-            if not p.isupper(): continue
+        #for i, p in enumerate(self.board):
+        for i in range(len(self.board)):
+            p = self.board[i]
+            if p != 'R' and p != 'N' and p != 'B' and p != 'Q' and p != 'K ' and p != 'P': continue
             for d in directions[p]:
-                for j in count(i+d, d):
+                #for j in count(i+d, d):
+                j = i+d
+                while j > 0:
                     q = self.board[j]
                     # Stay inside the board, and off friendly pieces
-                    if q.isspace() or q.isupper(): break
+                    #JS: if not p.isupper(): continue
+                    if not p in 'PRNBQK': continue
                     # Pawn move, double move and capture
                     if p == 'P' and d in (N, N+N) and q != '.': break
                     if p == 'P' and d == N+N and (i < A1+N or self.board[i+N] != '.'): break
@@ -166,28 +187,30 @@ class Position:
                     # Move it
                     yield (i, j)
                     # Stop crawlers from sliding, and sliding after captures
-                    if p in 'PNK' or q.islower(): break
+                    #JS: if p in 'PNK' or q.islower(): break
+                    if not q in '.prnbqk': break
                     # Castling, by sliding the rook next to the king
                     if i == A1 and self.board[j+E] == 'K' and self.wc[0]: yield (j+E, j+W)
                     if i == H1 and self.board[j+W] == 'K' and self.wc[1]: yield (j+W, j+E)
+                    j = j + d
 
     def rotate(self):
         ''' Rotates the board, preserving enpassant '''
         return Position(
-            self.board[::-1].swapcase(), -self.score, self.bc, self.wc,
+            swapcase(self.board[::-1]), -self.score, self.bc, self.wc,
             119-self.ep if self.ep else 0,
             119-self.kp if self.kp else 0)
 
     def nullmove(self):
         ''' Like rotate, but clears ep and kp '''
         return Position(
-            self.board[::-1].swapcase(), -self.score,
+            swapcase(self.board[::-1]), -self.score,
             self.bc, self.wc, 0, 0)
 
     def move(self, move):
         i, j = move
         p, q = self.board[i], self.board[j]
-        put = lambda board, i, p: board[:i] + p + board[i+1:]
+        #JS put = lambda board, i, p: board[:i] + p + board[i+1:]
         # Copy variables and reset ep and kp
         board = self.board
         wc, bc, ep, kp = self.wc, self.bc, 0, 0
@@ -224,8 +247,9 @@ class Position:
         # Actual move
         score = pst[p][j] - pst[p][i]
         # Capture
-        if q.islower():
-            score += pst[q.upper()][119-j]
+        #if q.islower():
+        if q in 'prnbqk':
+            score += pst[swapcase(q)][119-j]
         # Castling check detection
         if abs(j-self.kp) < 2:
             score += pst['K'][119-j]
