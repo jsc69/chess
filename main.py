@@ -61,12 +61,20 @@ pst = {
             17,  30,  -3, -14,   6,  -1,  40,  18),
 }
 # Pad tables and join piece and pst dictionaries
+# -> JS: changed to fit Makecode Arcade
+#for k, table in pst.items():
+#    padrow = lambda row: (0,) + tuple(x+piece[k] for x in row) + (0,)
+#    pst[k] = sum((padrow(table[i*8:i*8+8]) for i in range(8)), ())
+#    pst[k] = (0,)*20 + pst[k] + (0,)*20
 for k in pst:
-    for table in k:
-        #padrow = lambda row: (0,) + tuple(x+piece[k] for x in row) + (0,)
-        for i in range(8):
-            pst[k] = pst[k] + (0,) + tuple(x+piece[k] for x in table[i*8:i*8]) + (0,) #padrow(table[i*8:i*8])
-        pst[k] = (0,)*20 + pst[k] + (0,)*20
+    vals = (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,)
+    for i in range(64):
+        if i%8 == 0:
+            vals = vals + (0,)
+        vals = vals + ((pst[k][i] + piece[k]),)
+        if i%8 == 7:
+            vals = vals + (0,)
+    pst[k] = vals + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,) + (0,)
 
 ###############################################################################
 # Global constants
@@ -122,7 +130,7 @@ DRAW_TEST = True
 # Chess logic
 ###############################################################################
 
-class Position(namedtuple('Position', 'board score wc bc ep kp')):
+class Position:
     """ A state of a chess game
     board -- a 120 char representation of the board
     score -- the board evaluation
@@ -131,6 +139,13 @@ class Position(namedtuple('Position', 'board score wc bc ep kp')):
     ep - the en passant square
     kp - the king passant square
     """
+    def __init__(self, board, score, wc, bc, ep, kp):
+        self.board=board
+        self.score=score
+        self.wc=wc
+        self.bc=bc
+        self.ep=ep
+        self.kp=kp
 
     def gen_moves(self):
         # For each of our pieces, iterate through each possible 'ray' of moves,
