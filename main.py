@@ -165,6 +165,9 @@ class Position:
         self.ep=ep
         self.kp=kp
 
+    def getScore(self):
+        return self.score
+
     def gen_moves(self):
         # For each of our pieces, iterate through each possible 'ray' of moves,
         # as defined in the 'directions' map. The rays are broken e.g. by
@@ -272,16 +275,20 @@ class Position:
 ###############################################################################
 
 # lower <= s(pos) <= upper
-Entry = namedtuple('Entry', 'lower upper')
+#JS Entry = namedtuple('Entry', 'lower upper')
+class Entry:
+    def __init__(self, lower, upper):
+        self.lower = lower
+        self.upper = upper
 
 class Searcher:
     def __init__(self):
         self.tp_score = {}
         self.tp_move = {}
-        self.history = set()
+        self.history = {}
         self.nodes = 0
 
-    def bound(self, pos, gamma, depth, root=True):
+    def bound(self, pos: Position, gamma, depth, root=True):
         """ returns r where
                 s(pos) <= r < gamma    if gamma > s(pos)
                 gamma <= r <= s(pos)   if gamma <= s(pos)"""
@@ -327,7 +334,7 @@ class Searcher:
         def moves():
             # First try not moving at all. We only do this if there is at least one major
             # piece left on the board, since otherwise zugzwangs are too dangerous.
-            if depth > 0 and not root and any(c in pos.board for c in 'RBNQ'):
+            if depth > 0 and not root and ('R' in pos.board or 'B' in pos.board or 'N' in pos.board or 'Q' in pos.board):
                 yield None, -self.bound(pos.nullmove(), 1-gamma, depth-3, root=False)
             # For QSearch we have a different kind of null-move, namely we can just stop
             # and not capture anythign else.
@@ -389,7 +396,7 @@ class Searcher:
         """ Iterative deepening MTD-bi search """
         self.nodes = 0
         if DRAW_TEST:
-            self.history = set(history)
+            self.history = {history}
             # print('# Clearing table due to new history')
             self.tp_score.clear()
 
@@ -434,16 +441,6 @@ def render(i):
     rank, fil = divmod(i - A1, 10)
     return chr(fil + ord('a')) + str(-rank + 1)
 
-
-def print_pos(pos):
-    print()
-    uni_pieces = {'R':'♜', 'N':'♞', 'B':'♝', 'Q':'♛', 'K':'♚', 'P':'♟',
-    'r':'♖', 'n':'♘', 'b':'♗', 'q':'♕', 'k':'♔', 'p':'♙', '.':'·'}
-    for i, row in enumerate(pos.board.split()):
-        print(' ', 8-i, ' '.join(uni_pieces.get(p, p) for p in row))
-    print('    a b c d e f g h \n\n')
-
-
 def main():
     hist = [Position(initial, 0, (True,True), (True,True), 0, 0)]
     searcher = Searcher()
@@ -487,9 +484,6 @@ def main():
         print("My move:", render(119-move[0]) + render(119-move[1]))
         hist.append(hist[-1].move(move))
 
-
-if __name__ == '__main__':
-    main()
 #######################################################################
 # Arcade Chess
 #######################################################################
