@@ -274,12 +274,47 @@ class Position:
 # Search logic
 ###############################################################################
 
+def partition(pos: Position, moves, start, end):
+    i = (start-1)
+    pivot = pos.value(moves[end])
+    for j in range(start, end):
+        if pos.value(moves[j]) >= pivot:
+            i = i+1
+            tmp = moves[j]
+            moves[j] = moves[i]
+            moves[i] = tmp
+
+    tmp = moves[end]
+    moves[end] = moves[i+1]
+    moves[i+1] = tmp
+    return (i+1)
+
+# Function to do Quick sort
+def quickSort(pos, moves: list, start, end):
+    if start < end:
+        pi = partition(pos, moves, start, end)
+        quickSort(pos, moves, start, pi-1)
+        quickSort(pos, moves, pi+1, end)
+
+
+def sortedMoves(pos: Position):
+    moves = []
+    for move in pos.gen_moves():
+        moves.append(move)
+    if len(moves) > 1:
+        quickSort(pos, moves, 0 , len(moves)-1)
+    return moves
+
 # lower <= s(pos) <= upper
 #JS Entry = namedtuple('Entry', 'lower upper')
 class Entry:
     def __init__(self, lower, upper):
         self.lower = lower
         self.upper = upper
+    def getLower(self):
+        return self.lower
+    def getUpper(self):
+        return self.upper
 
 class Searcher:
     def __init__(self):
@@ -320,11 +355,12 @@ class Searcher:
         # Look in the table if we have already searched this position before.
         # We also need to be sure, that the stored search was over the same
         # nodes as the current search.
-        entry = self.tp_score.get((pos, depth, root), Entry(-MATE_UPPER, MATE_UPPER))
-        if entry.lower >= gamma and (not root or self.tp_move.get(pos) is not None):
-            return entry.lower
-        if entry.upper < gamma:
-            return entry.upper
+        entry = Entry(0,0)
+        entry = self.tp_score[(pos, depth, root), Entry(-MATE_UPPER, MATE_UPPER)]
+        if entry.getLower() >= gamma and (not root or self.tp_move[pos] is not None):
+            return entry.getLower()
+        if entry.getUpper() < gamma:
+            return entry.getUpper()
 
         # Here extensions may be added
         # Such as 'if in_check: depth += 1'
@@ -344,11 +380,11 @@ class Searcher:
             # Note, we don't have to check for legality, since we've already done it
             # before. Also note that in QS the killer must be a capture, otherwise we
             # will be non deterministic.
-            killer = self.tp_move.get(pos)
+            killer = self.tp_move[pos]
             if killer and (depth > 0 or pos.value(killer) >= QS_LIMIT):
                 yield killer, -self.bound(pos.move(killer), 1-gamma, depth-1, root=False)
             # Then all the other moves
-            for move in sorted(pos.gen_moves(), key=pos.value, reverse=True):
+            for move in sortedMoves(pos):
                 #for val, move in sorted(((pos.value(move), move) for move in pos.gen_moves()), reverse=True):
                     # If depth == 0 we only try moves with high intrinsic score (captures and
                 # promotions). Otherwise we do all moves.
@@ -361,7 +397,7 @@ class Searcher:
             best = max(best, score)
             if best >= gamma:
                 # Clear before setting, so we always have a value
-                if len(self.tp_move) > TABLE_SIZE: self.tp_move.clear()
+                if len(self.tp_move) > TABLE_SIZE: self.tp_move = []
                 # Save the move for pv construction and killer heuristic
                 self.tp_move[pos] = move
                 break
