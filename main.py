@@ -305,6 +305,12 @@ def sortedMoves(pos: Position):
         quickSort(pos, moves, 0 , len(moves)-1)
     return moves
 
+def is_dead(pos: Position):
+    check = True
+    for m in pos.gen_moves():
+        check = check and pos.value(m) >= MATE_LOWER
+    return check
+
 # lower <= s(pos) <= upper
 #JS Entry = namedtuple('Entry', 'lower upper')
 class Entry:
@@ -393,7 +399,10 @@ class Searcher:
 
         # Run through the moves, shortcutting when possible
         best = -MATE_UPPER
-        for move, score in moves():
+#        listOfMoves = []
+        listOfMoves = moves()
+        for move in listOfMoves:
+            score = move[1]
             best = max(best, score)
             if best >= gamma:
                 # Clear before setting, so we always have a value
@@ -413,13 +422,15 @@ class Searcher:
         # but only if depth == 1, so that's probably fair enough.
         # (Btw, at depth 1 we can also mate without realizing.)
         if best < gamma and best < 0 and depth > 0:
-            is_dead = lambda pos: any(pos.value(m) >= MATE_LOWER for m in pos.gen_moves())
-            if all(is_dead(pos.move(m)) for m in pos.gen_moves()):
+            check = True
+            for m in pos.gen_moves():
+                check = check and is_dead(pos.move(m))
+            if check:
                 in_check = is_dead(pos.nullmove())
                 best = -MATE_UPPER if in_check else 0
 
         # Clear before setting, so we always have a value
-        if len(self.tp_score) > TABLE_SIZE: self.tp_score.clear()
+        if len(self.tp_score) > TABLE_SIZE: self.tp_score = []
         # Table part 2
         if best >= gamma:
             self.tp_score[pos, depth, root] = Entry(best, entry.upper)
@@ -434,7 +445,7 @@ class Searcher:
         if DRAW_TEST:
             self.history = {history}
             # print('# Clearing table due to new history')
-            self.tp_score.clear()
+            self.tp_score = []
 
         # In finished games, we could potentially go far enough to cause a recursion
         # limit exception. Hence we bound the ply.
@@ -462,7 +473,7 @@ class Searcher:
 ###############################################################################
 # User interface
 ###############################################################################
-
+"""
 # Python 2 compatability
 if sys.version_info[0] == 2:
     input = raw_input
@@ -519,7 +530,7 @@ def main():
         # 'back rotate' the move before printing it.
         print("My move:", render(119-move[0]) + render(119-move[1]))
         hist.append(hist[-1].move(move))
-
+"""
 #######################################################################
 # Arcade Chess
 #######################################################################
